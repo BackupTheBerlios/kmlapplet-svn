@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="KMLBrowser" basedir=".">
+	<description>Builds, tests, and runs the project KMLBrowser.</description>
+	<property name="build.dir" value="build" />
+	<property name="build.classes.dir" value="${build.dir}/classes" />
+	<property name="build.jar.name" value="kmlbrowser.jar" />
+	<property name="build.jar.file" value="${build.dir}/${build.jar.name}" />
+
+	<property name="war.dir" value="web" />
+
+
+	<!-- ================================= 
+          target: prepare              
+         ================================= -->
+	<target name="prepare" description="setup build env">
+		<mkdir dir="${build.classes.dir}" />
+	</target>
+
+
+	<!-- ================================= 
+          target: compile              
+         ================================= -->
+	<target name="compile" depends="prepare" description="compiles java code">
+		<javac srcdir="src" destdir="${build.classes.dir}" target="1.5" debug="on" />
+	</target>
+
+
+	<!-- ================================= 
+          target: jar              
+         ================================= -->
+	<target name="jar" depends="compile" description="create jar zip file">
+		<jar destfile="${build.jar.file}" basedir="${build.classes.dir}">
+		</jar>
+	</target>
+
+
+	<!-- ================================= 
+          target: deploy              
+         ================================= -->
+	<target name="deploy" depends="jar" description="installs on server">
+		<ftp server="${deploy.server}" userid="${deploy.userid}" password="${deploy.password}" remotedir="${deploy.remotedir}">
+			<fileset dir="${build.dir}" casesensitive="yes">
+			  <filename name="${build.jar.name}"/>
+			</fileset>
+		</ftp>
+	</target>
+</project>
