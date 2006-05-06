@@ -123,13 +123,21 @@ public class Util {
 
 	static Rectangle parseRectangle(String coords) {
 		String[] c = coords.split(",");
-		return new Rectangle(Integer.parseInt(c[0]), Integer.parseInt(c[1]),
-				Integer.parseInt(c[2]), Integer.parseInt(c[3]));
+		return new Rectangle(parseInt(c[0]), parseInt(c[1]), parseInt(c[2]),
+				parseInt(c[3]));
 	}
 
 	static Point parsePoint(String coords) {
 		String[] c = coords.split(",");
-		return new Point(Integer.parseInt(c[0]), Integer.parseInt(c[1]));
+		return new Point(parseInt(c[0]), parseInt(c[1]));
+	}
+
+	private static int parseInt(String x) {
+		try {
+			return Integer.parseInt(x);
+		} catch (NumberFormatException e) {
+			return 0;
+		}
 	}
 
 	static Color[] parseGradient(String t) {
@@ -137,17 +145,24 @@ public class Util {
 		String[] from = fromto[0].split(",");
 		String[] to = fromto[1].split(",");
 		return new Color[] {
-				new Color(Integer.parseInt(from[0]), Integer.parseInt(from[1]),
-						Integer.parseInt(from[2])),
-				new Color(Integer.parseInt(to[0]), Integer.parseInt(to[1]),
-						Integer.parseInt(to[2])) };
-
+				new Color(parseInt(from[0]), parseInt(from[1]),
+						parseInt(from[2])),
+				new Color(parseInt(to[0]), parseInt(to[1]), parseInt(to[2])) };
 	}
 
 	static Document parseXmlString(String xml) {
+		try {
+			return parseXmlString(xml, "UTF-8");
+		} catch (Exception e) {
+			return parseXmlString(xml, "ISO-8859-1");
+		}
+	}
+
+	private static Document parseXmlString(String xml, String encoding) {
 		InputStream in;
 		try {
-			in = new ByteArrayInputStream(xml.getBytes("UTF-8"));
+
+			in = new ByteArrayInputStream(xml.getBytes(encoding));
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException(e);
 		}
