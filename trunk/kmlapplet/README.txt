@@ -8,6 +8,17 @@ KML Applet
 	
 	* Let you show of your KML site to potential users
 	* Eases debugging during development of your kiss site
+	
+LICENSE
+	
+	The code is licensed under the GPL license. See 
+	
+	http://www.gnu.org/copyleft/gpl.html
+	
+	for more info. You can publish modified versions of this code however I would prefer
+	that you contribute modifications at http://developer.berlios.de/projects/kmlapplet/.
+	
+	You can use the code in your own projects as long as it is also GPL'ed. 
 
 How to use
 ----------
@@ -47,6 +58,15 @@ Status
 	* Sign applet so that it is allowed to connect to other sites.
 	  
 	So you are very welcome to contribute.
+	
+Inspiration
+-----------
+
+	The code is written by me however the inspiration came from the 
+	
+		http://kiss.breuking.com/kmlbrowser/kmlbrowser.html
+	
+	project.
   
 /Erik Martino <erik . martino (at) gmail . com>
 
