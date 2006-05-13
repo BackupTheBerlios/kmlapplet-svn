@@ -4,15 +4,27 @@
 <title>KML Applet</title>
 </head>
 <body style="background-color: #517998">
+<h2>Applet contacting remote site</h2>
+
 <applet archive="kmlbrowser.jar" code="dk.profundo.kmlbrowser.KMLApplet"
 	width="720" height="512" alt="">
-	<param name="url" value="http://kml.profundo.dk/index.kml">
+	<param name="url2" value="http://kml.profundo.dk/index.kml">
+	<param name="url" value="http://webradio2.kiss-technology.com/webradio2/kml/index.php">
 </applet>
+
 <h2>Java Webstart</h2>
 <p>
 	Webstart is a technology that lets you run a Java application by a
 	single click, that is if Java is properly installed on your machine</p>
 <p>
 	<a href="kmlbrowser.jnlp">Start KML Browser</a></p>
+	
+<h2>Applet contacting local site</h2>
+
+<applet archive="kmlbrowser.jar" code="dk.profundo.kmlbrowser.KMLApplet"
+	width="720" height="512" alt="">
+	<param name="url" value="http://kml.profundo.dk/index.kml">
+</applet>
+
 </body>
 </html>
