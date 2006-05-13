@@ -7,6 +7,8 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,6 +25,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import dk.profundo.kmlbrowser.remote.ButtonEvent;
+import dk.profundo.kmlbrowser.remote.ButtonListener;
+import dk.profundo.kmlbrowser.remote.RemoteDp558;
 
 /*
  * KML Applet
@@ -49,11 +55,13 @@ import org.w3c.dom.NodeList;
  * interpreter that handles keypresses and loads images, KML documents and
  * displays them
  */
-public class KMLInterpreter extends KMLCanvas implements KeyListener {
+public class KMLInterpreter extends KMLCanvas implements KeyListener,
+		ButtonListener, MouseListener {
 
 	public KMLInterpreter() {
 		reset();
 		this.addKeyListener(this);
+		this.addMouseListener(this);
 	}
 
 	protected void reset() {
@@ -76,6 +84,8 @@ public class KMLInterpreter extends KMLCanvas implements KeyListener {
 	Map preloadedImages = new HashMap();
 
 	private Map cachedImages = new HashMap();
+
+	private JFrame remote;
 
 	public static void main(String[] args) throws Exception {
 		JFrame f = new JFrame("KMLBrowser");
@@ -201,7 +211,7 @@ public class KMLInterpreter extends KMLCanvas implements KeyListener {
 	}
 
 	public void setFipText(String string) {
-		
+
 	}
 
 	/** process xml not enclosed by a root tag */
@@ -381,7 +391,7 @@ public class KMLInterpreter extends KMLCanvas implements KeyListener {
 				onButton(Button.NEXT);
 				break;
 			default:
-				// message(event.toString());
+			// message(event.toString());
 			}
 		} catch (Exception e1) {
 			e1.printStackTrace();
@@ -476,5 +486,49 @@ public class KMLInterpreter extends KMLCanvas implements KeyListener {
 				break;
 			}
 		}
+	}
+
+	public void buttonPressed(ButtonEvent e) {
+		onButton(e.getButtonCode());
+	}
+
+	public void mouseClicked(MouseEvent e) {
+		if (e.getClickCount() == 2) {
+			openRemoteWindow();
+		}
+	}
+
+	private void openRemoteWindow() {
+		if (remote == null) {
+			JFrame f = new JFrame("Remote");
+			f.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+			RemoteDp558 remoteDp558 = new RemoteDp558();
+			f.getContentPane().add(remoteDp558);
+			remoteDp558.addButtonListener(this);
+			f.pack();
+			f.setVisible(true);
+			remote = f;
+		} else {
+			remote.setVisible(true);
+		}
+	}
+
+	public void mousePressed(MouseEvent e) {
+
+	}
+
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+
 	}
 }

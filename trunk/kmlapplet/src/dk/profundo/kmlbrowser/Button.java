@@ -96,4 +96,6 @@ public class Button {
 	public final static int CLEAR = 0x0067;
 
 	public final static int SEARCH = 0x0068;
+
+	public static final int UNKNOWN = 0;
 }
