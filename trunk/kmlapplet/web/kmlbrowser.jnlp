@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="1.0+" codebase="http://kml.profundo.dk">
+	<information>
+	  <title>KML Applet</title>
+	  <vendor>kmlapplet.berlios.de Developers</vendor>
+	  <homepage href="/" />
+	  <description>Demonstration of JNLP</description>
+	</information>
+	<offline-allowed/>
+	<security>
+	  <j2ee-application-client-permissions/>
+	</security>
+	<resources>
+	  <j2se version="1.2+" />
+	  <jar href="kmlbrowser.jar"/>
+	</resources>
+	<application-desc main-class="dk.profundo.kmlbrowser.Browser" />
+</jnlp>

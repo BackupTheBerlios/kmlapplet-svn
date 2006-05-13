@@ -45,7 +45,6 @@ import org.w3c.dom.NodeList;
  * 
  */
 
-@SuppressWarnings("serial")
 /**
  * interpreter that handles keypresses and loads images, KML documents and
  * displays them
@@ -66,19 +65,19 @@ public class KMLInterpreter extends KMLCanvas implements KeyListener {
 		activeMenu = 0;
 	}
 
-	List<KMLActionBlock> menus = new ArrayList<KMLActionBlock>();
+	List menus = new ArrayList();
 
 	int activeMenu = 0;
 
 	Timer timer = new Timer();
 
-	Map<String, KMLActionBlock> userKeyActions = new HashMap<String, KMLActionBlock>();
+	Map userKeyActions = new HashMap();
 
-	Map<String, Image> preloadedImages = new HashMap<String, Image>();
+	Map preloadedImages = new HashMap();
 
-	private Map<String, BufferedImage> cachedImages = new HashMap<String, BufferedImage>();
+	private Map cachedImages = new HashMap();
 
-	public static void main(String... args) throws Exception {
+	public static void main(String[] args) throws Exception {
 		JFrame f = new JFrame("KMLBrowser");
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		f.setLayout(new BorderLayout());
@@ -94,10 +93,10 @@ public class KMLInterpreter extends KMLCanvas implements KeyListener {
 	}
 
 	protected void processElement(Element el) {
-		KMLCommand elementName = KMLCommand.valueOf(el.getTagName());
+		int elementName = KMLCommand.valueOf(el.getTagName());
 
 		switch (elementName) {
-		case BACKGROUND: {
+		case KMLCommand.BACKGROUND: {
 			String t;
 			if ((t = el.getAttribute("href")) != null && t.length() > 0) {
 				backgroundimage(Util.loadImage(t));
@@ -118,7 +117,7 @@ public class KMLInterpreter extends KMLCanvas implements KeyListener {
 			}
 			break;
 		}
-		case TEXT: {
+		case KMLCommand.TEXT: {
 			String text = Util.innerText(el);
 			text(Util.parsePoint(el.getAttribute("coords")), Fonts.getFont(el
 					.getAttribute("font")), Palette.getColor(Integer
@@ -131,25 +130,25 @@ public class KMLInterpreter extends KMLCanvas implements KeyListener {
 		 * GetEndPoint(el.getAttribute("coords")); this.line()
 		 * box.drawLine(start.x, start.y, end.x, end.y); break; }
 		 */
-		case RECT: {
+		case KMLCommand.RECT: {
 			Color pen = Palette.getColor(Integer.parseInt(el
 					.getAttribute("pen")));
 			Rectangle coords = Util.parseRectangle(el.getAttribute("coords"));
 			rect(coords, pen);
 			break;
 		}
-		case FILLRECT: {
+		case KMLCommand.FILLRECT: {
 			Color pen = Palette.getColor(Integer.parseInt(el
 					.getAttribute("pen")));
 			Rectangle coords = Util.parseRectangle(el.getAttribute("coords"));
 			fillrect(coords, pen);
 			break;
 		}
-		case MENUITEM: {
+		case KMLCommand.MENUITEM: {
 			addMenuItem(el);
 			break;
 		}
-		case ONTIMER: {
+		case KMLCommand.ONTIMER: {
 			final String code = Util.innerText(el);
 			long timeout = (long) Double
 					.parseDouble(el.getAttribute("timeout"));
@@ -165,32 +164,35 @@ public class KMLInterpreter extends KMLCanvas implements KeyListener {
 			}, timeout);
 			break;
 		}
-		case LOADIMAGE: {
+		case KMLCommand.LOADIMAGE: {
 			BufferedImage image;
 			String src = el.getAttribute("href");
-			if ((image = cachedImages.get(src)) == null) {
+			if ((image = (BufferedImage) cachedImages.get(src)) == null) {
 				image = Util.loadImage(src);
 				cachedImages.put(src, image);
 			}
 			preloadedImages.put(el.getAttribute("id"), image);
 			break;
 		}
-		case IMAGE: {
-			Image img = preloadedImages.get(el.getAttribute("id"));
+		case KMLCommand.IMAGE: {
+			Image img = (Image) preloadedImages.get(el.getAttribute("id"));
 			Point p = Util.parsePoint(el.getAttribute("coords"));
 			image(p, img);
 			break;
 		}
-		case GOTO: {
+		case KMLCommand.GOTO: {
 			setUrl(el.getAttribute("href"));
 			break;
 		}
-		case KEY: {
+		case KMLCommand.KEY:
 			addKeyAction(el);
 			break;
-		}
 
-		case MENUSELECT:
+		case KMLCommand.FIP:
+			setFipText(Util.innerText(el));
+			break;
+
+		case KMLCommand.MENUSELECT:
 			selectMenu(el.getAttribute("item"));
 			break;
 		default:
@@ -198,9 +200,13 @@ public class KMLInterpreter extends KMLCanvas implements KeyListener {
 		}
 	}
 
+	public void setFipText(String string) {
+		
+	}
+
 	/** process xml not enclosed by a root tag */
 	protected void processInnerXml(String innerXml) {
-		message(innerXml);
+		// message(innerXml);
 		String xml = "<root>" + innerXml + "</root>";
 		processDocument(Util.parseXmlString(xml));
 	}
@@ -215,7 +221,7 @@ public class KMLInterpreter extends KMLCanvas implements KeyListener {
 
 	protected void refreshMenus() {
 		for (int i = 0; i < menus.size(); i++) {
-			KMLActionBlock menu = menus.get(i);
+			KMLActionBlock menu = (KMLActionBlock) menus.get(i);
 			if (i == activeMenu) {
 				processInnerXml(menu.hilite);
 			} else {
@@ -225,9 +231,11 @@ public class KMLInterpreter extends KMLCanvas implements KeyListener {
 	}
 
 	protected void processDocument(Document doc) {
-		for (Node n : Util.filterElement(Util.asIterable(doc.getFirstChild()
-				.getChildNodes()))) {
-			processElement((Element) n);
+		NodeList nl = doc.getFirstChild().getChildNodes();
+		for (int i = 0; i < nl.getLength(); i++) {
+			Node n = nl.item(i);
+			if (n instanceof Element)
+				processElement((Element) n);
 		}
 	}
 
@@ -235,7 +243,7 @@ public class KMLInterpreter extends KMLCanvas implements KeyListener {
 		KMLActionBlock old = getActiveMenu();
 
 		for (int i = 0; i < menus.size(); i++) {
-			if (menus.get(i).id.equals(menuId))
+			if (((KMLActionBlock) menus.get(i)).id.equals(menuId))
 				activeMenu = i;
 		}
 
@@ -266,12 +274,16 @@ public class KMLInterpreter extends KMLCanvas implements KeyListener {
 	protected KMLActionBlock createActionBlock(String id, NodeList actionItems) {
 		KMLActionBlock actionBlock = new KMLActionBlock();
 		actionBlock.id = id;
-		for (Element elm : Util.filterElement(Util.asIterable(actionItems))) {
-			try {
-				KMLAction action = KMLAction.valueOf((elm).getTagName());
-				actionBlock.setAction(action, Util.innerText(elm));
-			} catch (RuntimeException e) {
-				onException(e);
+		for (int i = 0; i < actionItems.getLength(); i++) {
+			Node node = actionItems.item(i);
+			if (node instanceof Element) {
+				Element elm = (Element) node;
+				try {
+					int action = KMLAction.valueOf((elm).getTagName());
+					actionBlock.setAction(action, Util.innerText(elm));
+				} catch (RuntimeException e) {
+					onException(e);
+				}
 			}
 		}
 		return actionBlock;
@@ -294,7 +306,7 @@ public class KMLInterpreter extends KMLCanvas implements KeyListener {
 				activeMenu += menus.size();
 			else if (activeMenu >= menus.size())
 				activeMenu -= menus.size();
-			return menus.get(activeMenu % menus.size());
+			return (KMLActionBlock) menus.get(activeMenu % menus.size());
 		} catch (Exception e) {
 			return null;
 		}
@@ -369,7 +381,7 @@ public class KMLInterpreter extends KMLCanvas implements KeyListener {
 				onButton(Button.NEXT);
 				break;
 			default:
-				message(event.toString());
+				// message(event.toString());
 			}
 		} catch (Exception e1) {
 			e1.printStackTrace();
@@ -411,36 +423,36 @@ public class KMLInterpreter extends KMLCanvas implements KeyListener {
 	 * @param button
 	 * @author xylifyx
 	 */
-	protected void onButton(Button button) {
-		String keyId = button.getId();
+	protected void onButton(int scancode) {
 		KMLActionBlock menu = getActiveMenu();
+
 		if (menu != null) {
-			switch (button) {
-			case UP:
+			switch (scancode) {
+			case Button.UP:
 				if (menu.up != null) {
 					processInnerXml(menu.up);
 					return;
 				}
 				break;
-			case DOWN:
+			case Button.DOWN:
 				if (menu.down != null) {
 					processInnerXml(menu.down);
 					return;
 				}
 				break;
-			case LEFT:
+			case Button.LEFT:
 				if (menu.left != null) {
 					processInnerXml(menu.left);
 					return;
 				}
 				break;
-			case RIGHT:
+			case Button.RIGHT:
 				if (menu.right != null) {
 					processInnerXml(menu.right);
 					return;
 				}
 				break;
-			case PLAY:
+			case Button.PLAY:
 				if (menu.hilite != null) {
 					processInnerXml(menu.click);
 					return;
@@ -448,17 +460,18 @@ public class KMLInterpreter extends KMLCanvas implements KeyListener {
 			}
 		}
 
-		KMLActionBlock code = userKeyActions.get(keyId);
+		KMLActionBlock code = (KMLActionBlock) userKeyActions.get(Integer
+				.toString(scancode));
 		if (code != null) {
 			processInnerXml(code.click);
 		} else {
-			switch (button) {
-			case DOWN:
-			case RIGHT:
+			switch (scancode) {
+			case Button.DOWN:
+			case Button.RIGHT:
 				nextMenu();
 				break;
-			case LEFT:
-			case UP:
+			case Button.LEFT:
+			case Button.UP:
 				prevMenu();
 				break;
 			}

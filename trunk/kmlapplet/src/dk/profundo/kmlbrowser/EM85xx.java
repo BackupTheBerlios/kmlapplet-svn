@@ -48,7 +48,7 @@ import javax.swing.JLabel;
  * @author ermh
  * 
  */
-@SuppressWarnings("serial")
+
 public class EM85xx extends JComponent {
 	public static final int HEIGHT = 512; // 480;
 
@@ -99,17 +99,14 @@ public class EM85xx extends JComponent {
 		clearOsd();
 	}
 
-	@Override
 	public Dimension getMinimumSize() {
 		return new Dimension(WIDTH, HEIGHT);
 	}
 
-	@Override
 	public Dimension getPreferredSize() {
 		return getMinimumSize();
 	}
 
-	@Override
 	public void paint(Graphics g) {
 		g.drawImage(yuv, 0, 0, this);
 		g.drawImage(osd, 0, 0, this);
@@ -127,7 +124,7 @@ public class EM85xx extends JComponent {
 		return g;
 	}
 
-	public static void main(String... args) throws Exception {
+	public static void main(String[] args) throws Exception {
 		JFrame f = new JFrame("KMLBrowser");
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		f.setLayout(new BorderLayout());

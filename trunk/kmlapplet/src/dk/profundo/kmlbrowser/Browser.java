@@ -11,7 +11,23 @@ import javax.swing.JTextField;
 
 /** Standalone browser */
 public class Browser extends JFrame {
-	KMLInterpreter browser = new KMLInterpreter();
+	public class BoundInterpreter extends KMLInterpreter {
+
+		public void setFipText(String string) {
+			super.setFipText(string);
+			Browser.this.setTitle(string);
+		}
+
+		public void setUrl(String url) {
+			try {
+				Browser.this.url.setText(url);
+			} catch (Exception e) {
+			}
+			super.setUrl(url);
+		}
+	}
+
+	KMLInterpreter browser = new BoundInterpreter();
 
 	JTextField url = new JTextField();
 
@@ -42,15 +58,18 @@ public class Browser extends JFrame {
 		this.addKeyListener(browser);
 		browser.addKeyListener(browser);
 		button.addKeyListener(browser);
+		url.addKeyListener(browser);
 	}
 
 	protected void onGoAction() {
 		browser.setUrl(url.getText());
 	}
 
-	public static void main(String... args) {
+	public static void main(String[] args) {
 		Browser b = new Browser();
 		b.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		b.setVisible(true);
+		//b.browser.setUrl("http://kml.kiss-technology.com/");
+		b.browser.setUrl("http://192.168.1.2:8888/index.kml");
 	}
 }

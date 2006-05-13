@@ -34,7 +34,6 @@ import javax.swing.JLabel;
  * 
  */
 
-@SuppressWarnings("serial")
 public class KMLCanvas extends EM85xx {
 	/** <code>&lt;BACKGROUND vgradient="0,0,0-0,0,128" /></code> */
 	public void vgradient(Color from, Color to) {
@@ -97,7 +96,7 @@ public class KMLCanvas extends EM85xx {
 		g.dispose();
 	}
 
-	public static void main(String... args) throws Exception {
+	public static void main(String[] args) throws Exception {
 		JFrame f = new JFrame("KMLBrowser");
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		f.setLayout(new BorderLayout());

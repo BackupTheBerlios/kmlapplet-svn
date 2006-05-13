@@ -11,8 +11,10 @@ import java.awt.image.WritableRaster;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.net.URL;
-import java.util.Iterator;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -45,60 +47,6 @@ import org.w3c.dom.NodeList;
 /** misc static utility methods and classes */
 public class Util {
 
-	public static Iterable<Node> asIterable(final NodeList childNodes) {
-		return new Iterable<Node>() {
-			public Iterator<Node> iterator() {
-				return new Iterator<Node>() {
-					int i = 0;
-
-					int length = childNodes.getLength();
-
-					public boolean hasNext() {
-						return i < length;
-					}
-
-					public Node next() {
-						return childNodes.item(i++);
-					}
-
-					public void remove() {
-						throw new RuntimeException();
-					}
-				};
-			}
-		};
-	}
-
-	public static Iterable<Element> filterElement(final Iterable<Node> nodes) {
-		return new Iterable<Element>() {
-			public Iterator<Element> iterator() {
-				final Iterator<Node> j = nodes.iterator();
-				return new Iterator<Element>() {
-					Element next;
-
-					public boolean hasNext() {
-						while (j.hasNext()) {
-							Node n = j.next();
-							if (n instanceof Element) {
-								next = (Element) n;
-								return true;
-							}
-						}
-						return false;
-					}
-
-					public Element next() {
-						return next;
-					}
-
-					public void remove() {
-						throw new RuntimeException();
-					}
-				};
-			}
-		};
-	}
-
 	public static String innerText(Element el) {
 		StringBuilder b = new StringBuilder();
 		NodeList childNodes = el.getChildNodes();
@@ -117,7 +65,7 @@ public class Util {
 		return s;
 	}
 
-	public static void main(String... strings) {
+	public static void main(String[] strings) {
 		System.out.println(repairXml("\n<MENUSELECT item='3'>   "));
 	}
 
@@ -202,8 +150,22 @@ public class Util {
 			doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
 					.parse(in);
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			throw new RuntimeException("loadDocument("+url+") "+e);
 		}
 		return doc;
+	}
+
+	public static Map nameValueMap(Class classObject) {
+		HashMap values = new HashMap();
+		Field[] fields = classObject.getFields();
+		for (int i = 0; i < fields.length; i++) {
+			try {
+				values.put(fields[i].getName(), new Integer(fields[i]
+						.getInt(null)));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return values;
 	}
 }

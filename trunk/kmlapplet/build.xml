@@ -1,27 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="KMLBrowser" basedir=".">
+<project name="KMLBrowser" default="jar" basedir=".">
 	<description>Builds, tests, and runs the project KMLBrowser.</description>
+	
+	<property file="etc/deploy.properties"/>	
+	
 	<property name="build.dir" value="build" />
 	<property name="build.classes.dir" value="${build.dir}/classes" />
 	<property name="build.jar.name" value="kmlbrowser.jar" />
 	<property name="build.jar.file" value="${build.dir}/${build.jar.name}" />
 
 	<property name="war.dir" value="web" />
-
+	
+	<property name="key.store" location="etc/keystore" />
+	<property name="key.alias" location="kmlbrowser" />
+	<property name="key.secret" location="secret" />
+	
+	<available property="key.available" file="${key.store}" />
+	
+	<available property="deploy.available" file="${key.store}" />
+	
+	<!-- set values in etc/deploy.properties -->
+	<property name="deploy.host" location="" />
+	<property name="deploy.user" location="" />
+	<property name="deploy.password" location="" />
+	<property name="deploy.remotedir" location="" />
 
 	<!-- ================================= 
           target: prepare              
          ================================= -->
-	<target name="prepare" description="setup build env">
-		<mkdir dir="${build.classes.dir}" />
+	<target name="prepare" depends="genkey" description="setup build env">
+		<mkdir dir="${build.classes.dir}" />	
 	</target>
+	
+	
+	<target name="genkey" unless="key.available">
+		<genkey alias="${key.alias}" keystore="${key.store}" storepass="${key.secret}" >
+		  <dname>
+		    <param name="CN" value="Anonymous KMLBrowser Developer"/>
+		    <param name="OU" value="Independent"/>
+		    <param name="O"  value="Not Affiliated with any organisation"/>
+		    <param name="C"  value="XW"/>
+		  </dname>
+		</genkey>
+	</target>
+	
+	
 
 
 	<!-- ================================= 
           target: compile              
          ================================= -->
 	<target name="compile" depends="prepare" description="compiles java code">
-		<javac srcdir="src" destdir="${build.classes.dir}" target="1.5" debug="on" />
+		<javac srcdir="src" destdir="${build.classes.dir}" source="1.2" target="1.2" debug="on" />
 	</target>
 
 
@@ -29,18 +59,24 @@
           target: jar              
          ================================= -->
 	<target name="jar" depends="compile" description="create jar zip file">
-		<jar destfile="${build.jar.file}" basedir="${build.classes.dir}">
+		<jar destfile="${build.jar.file}" basedir="${build.classes.dir}" manifest="etc/manifest.txt">
 		</jar>
+		<!-- keytool -genkey -alias kmlbrowser -keystore etc/keystore (password secret) -->
+		<signjar jar="${build.jar.file}" alias="${key.alias}" keystore="${key.store}" storepass="${key.secret}"/>
 	</target>
 
 
 	<!-- ================================= 
-          target: deploy              
+          target: deploy         
+          configure in etc/deploy.properties     
          ================================= -->
 	<target name="deploy" depends="jar" description="installs on server">
-		<ftp server="${deploy.server}" userid="${deploy.userid}" password="${deploy.password}" remotedir="${deploy.remotedir}">
+		<ftp server="${deploy.host}" userid="${deploy.user}" password="${deploy.password}" remotedir="${deploy.remotedir}">
 			<fileset dir="${build.dir}" casesensitive="yes">
 			  <filename name="${build.jar.name}"/>
+			</fileset>
+			<fileset dir="web" casesensitive="yes">
+			    <include name="**/*"/>
 			</fileset>
 		</ftp>
 	</target>

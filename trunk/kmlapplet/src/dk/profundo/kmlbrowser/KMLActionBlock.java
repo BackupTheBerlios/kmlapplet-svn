@@ -24,27 +24,27 @@ package dk.profundo.kmlbrowser;
 public class KMLActionBlock {
 	String id, click, hilite, unhilite, left, right, up, down;
 
-	public void setAction(KMLAction actionName, String value) {
+	public void setAction(int actionName, String value) {
 		switch (actionName) {
-		case ONCLICK:
+		case KMLAction.ONCLICK:
 			this.click = value;
 			break;
-		case ONHILITE:
+		case KMLAction.ONHILITE:
 			this.hilite = value;
 			break;
-		case ONUNHILITE:
+		case KMLAction.ONUNHILITE:
 			this.unhilite = value;
 			break;
-		case ONLEFT:
+		case KMLAction.ONLEFT:
 			this.left = value;
 			break;
-		case ONRIGHT:
+		case KMLAction.ONRIGHT:
 			this.right = value;
 			break;
-		case ONUP:
+		case KMLAction.ONUP:
 			this.up = value;
 			break;
-		case ONDOWN:
+		case KMLAction.ONDOWN:
 			this.down = value;
 			break;
 		}

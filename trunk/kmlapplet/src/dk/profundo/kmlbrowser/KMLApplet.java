@@ -25,7 +25,6 @@ import javax.swing.JApplet;
  * 
  */
 
-@SuppressWarnings("serial")
 public class KMLApplet extends JApplet {
 	KMLInterpreter interpreter;// = new KMLInterpreter();
 

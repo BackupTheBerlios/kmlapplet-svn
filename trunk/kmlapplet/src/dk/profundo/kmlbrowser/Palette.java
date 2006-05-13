@@ -32,8 +32,7 @@ import java.awt.image.IndexColorModel;
  */
 public class Palette extends IndexColorModel {
 	public Palette() {
-		super(8, 256, Palette.getR(), Palette.getG(), Palette.getB(), Palette
-				.getA());
+		super(8, 256, r(), g(), b(), a());
 	}
 
 	public static Color getColor(int index) {
@@ -44,7 +43,7 @@ public class Palette extends IndexColorModel {
 		}
 	}
 
-	public final static byte[] getR() {
+	private final static byte[] r() {
 		byte[] b = new byte[palette.length];
 		for (int i = 0; i < b.length; i++) {
 			b[i] = (byte) palette[i].getRed();
@@ -52,7 +51,7 @@ public class Palette extends IndexColorModel {
 		return b;
 	}
 
-	public final static byte[] getG() {
+	private final static byte[] g() {
 		byte[] b = new byte[palette.length];
 		for (int i = 0; i < b.length; i++) {
 			b[i] = (byte) palette[i].getGreen();
@@ -60,7 +59,7 @@ public class Palette extends IndexColorModel {
 		return b;
 	}
 
-	public final static byte[] getB() {
+	private final static byte[] b() {
 		byte[] b = new byte[palette.length];
 		for (int i = 0; i < b.length; i++) {
 			b[i] = (byte) palette[i].getBlue();
@@ -68,7 +67,7 @@ public class Palette extends IndexColorModel {
 		return b;
 	}
 
-	public final static byte[] getA() {
+	private final static byte[] a() {
 		byte[] b = new byte[palette.length];
 		for (int i = 0; i < b.length; i++) {
 			b[i] = (byte) palette[i].getAlpha();

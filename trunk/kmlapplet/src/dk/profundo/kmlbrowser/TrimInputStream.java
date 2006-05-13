@@ -24,6 +24,7 @@ import java.io.InputStream;
  * 
  */
 
+/** removes initial whitespace from an XML stream */
 public class TrimInputStream extends InputStream {
 	private InputStream in;
 
@@ -33,7 +34,6 @@ public class TrimInputStream extends InputStream {
 
 	boolean inStart = true;
 
-	@Override
 	public int read() throws IOException {
 		if (inStart) {
 			int c;
@@ -46,13 +46,11 @@ public class TrimInputStream extends InputStream {
 			return in.read();
 	}
 
-	@Override
 	public void close() throws IOException {
 		in.close();
 		super.close();
 	}
 
-	@Override
 	public long skip(long n) throws IOException {
 		// TODO Auto-generated method stub
 		return in.skip(n);
