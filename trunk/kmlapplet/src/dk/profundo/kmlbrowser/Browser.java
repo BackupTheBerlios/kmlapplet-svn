@@ -69,7 +69,12 @@ public class Browser extends JFrame {
 		Browser b = new Browser();
 		b.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		b.setVisible(true);
-		//b.browser.setUrl("http://kml.kiss-technology.com/");
-		b.browser.setUrl("http://192.168.1.2:8888/index.kml");
+		// b.browser.setUrl("http://kml.kiss-technology.com/");
+		String url = "http://192.168.1.2:8888/index.kml";
+		b.setUrl(url);
+	}
+
+	public void setUrl(String url) {
+		browser.setUrl(url);
 	}
 }

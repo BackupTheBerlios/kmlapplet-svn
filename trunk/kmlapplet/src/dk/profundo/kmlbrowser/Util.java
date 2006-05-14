@@ -126,7 +126,19 @@ public class Util {
 		}
 	}
 
-	protected static BufferedImage loadImage(String url) {
+	private static Map loadedImages = new HashMap();
+
+	public static BufferedImage loadImage(String url) {
+		if (loadedImages.get(url) != null) {
+			return (BufferedImage)loadedImages.get(url);
+		} else {
+			BufferedImage img = loadImage2(url);
+			loadedImages.put(url, img);
+			return img;
+		}
+	}
+
+	public static BufferedImage loadImage2(String url) {
 		try {
 			BufferedImage img = ImageIO.read(new URL(url));
 			ColorModel colorModel = img.getColorModel();

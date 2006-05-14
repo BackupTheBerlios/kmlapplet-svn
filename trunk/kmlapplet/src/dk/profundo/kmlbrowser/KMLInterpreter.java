@@ -185,7 +185,14 @@ public class KMLInterpreter extends KMLCanvas implements KeyListener,
 			break;
 		}
 		case KMLCommand.IMAGE: {
-			Image img = (Image) preloadedImages.get(el.getAttribute("id"));
+			Image img = null;
+			String id = el.getAttribute("id");
+			String src = el.getAttribute("src");
+			if (id != null && id.length() > 0) {
+				img = (Image) preloadedImages.get(id);
+			} else if (src != null && src.length() > 0) {
+				img = Util.loadImage(src);
+			}
 			Point p = Util.parsePoint(el.getAttribute("coords"));
 			image(p, img);
 			break;
