@@ -39,6 +39,13 @@ $back = $_GET['back'] + 0;
 	$y += 20;
 	}
 ?>
+
+<KEY id="16388">
+<ONCLICK><![CDATA[
+<GOTO href="http://kml.profundo.dk/index2.php" />
+]]></ONCLICK>
+</KEY>
+
 <BACKGROUND vgradient="146,208,250-11,47,72" />
 <FILLRECT coords="0,0,720,479" pen="0" />
 <FILLRECT coords="0,0,720,56" pen="250" />

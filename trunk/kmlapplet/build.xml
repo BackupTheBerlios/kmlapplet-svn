@@ -59,10 +59,12 @@
           target: jar              
          ================================= -->
 	<target name="jar" depends="compile" description="create jar zip file">
-		<jar destfile="${build.jar.file}" basedir="${build.classes.dir}" manifest="etc/manifest.txt">
+		<jar destfile="${build.jar.file}" basedir="${build.classes.dir}" 
+				manifest="etc/manifest.txt">
 		</jar>
 		<!-- keytool -genkey -alias kmlbrowser -keystore etc/keystore (password secret) -->
-		<signjar jar="${build.jar.file}" alias="${key.alias}" keystore="${key.store}" storepass="${key.secret}"/>
+		<signjar jar="${build.jar.file}" alias="${key.alias}" keystore="${key.store}" 
+				storepass="${key.secret}"/>
 	</target>
 
 
@@ -70,7 +72,7 @@
           target: deploy         
           configure in etc/deploy.properties     
          ================================= -->
-	<target name="deploy" depends="jar" description="installs on server">
+	<target name="deploy" description="installs on server">
 		<ftp server="${deploy.host}" userid="${deploy.user}" password="${deploy.password}" remotedir="${deploy.remotedir}">
 			<fileset dir="${build.dir}" casesensitive="yes">
 			  <filename name="${build.jar.name}"/>

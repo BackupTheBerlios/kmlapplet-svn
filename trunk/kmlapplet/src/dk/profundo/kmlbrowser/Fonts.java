@@ -1,6 +1,8 @@
 package dk.profundo.kmlbrowser;
 
 import java.awt.Font;
+import java.util.HashMap;
+import java.util.Map;
 
 /*
  * KML Applet
@@ -26,28 +28,32 @@ import java.awt.Font;
 /** not sure what the correct sizes are */
 public class Fonts {
 
-	static Font[] font = new Font[] { null, createFont(1), createFont(2),
-			createFont(3), createFont(4), createFont(5) };
+	private static final int WEIGHT = Font.PLAIN;
+	private static final String FONT = "Verdana";
 
 	private static Font createFont(int fontNumber) {
 		switch (fontNumber) {
 		case 1:
-			return new Font("Arial", Font.PLAIN, 24);
+			return new Font(FONT, WEIGHT, 24);
 		case 2:
-			return new Font("Arial", Font.PLAIN, 24);
+			return new Font(FONT, WEIGHT, 44);
 		case 3:
-			return new Font("Arial", Font.PLAIN, 44);
+			return new Font(FONT, WEIGHT, 44);
 		case 4:
-			return new Font("Arial", Font.PLAIN, 44);
-		case 5:
-			return new Font("Arial", Font.PLAIN, 24);
+			return new Font("Wingdings", Font.PLAIN, 16);
 		default:
-			return null;
+			return new Font(FONT, WEIGHT, 16);
 		}
 	}
 
+	static Map fonts = new HashMap();
+
 	public static Font getFont(int fontNumber) {
-		return font[fontNumber];
+		Font f = (Font) fonts.get(new Integer(fontNumber));
+		if (f == null) {
+			fonts.put(new Integer(fontNumber), f = createFont(fontNumber));
+		}
+		return f;
 	}
 
 	public static Font getFont(String font) {
