@@ -132,13 +132,20 @@ public class Util {
 			ColorModel colorModel = img.getColorModel();
 			if (colorModel instanceof IndexColorModel) {
 				Raster data = img.getData();
-				if (data instanceof WritableRaster)
-					return new BufferedImage(new Palette(),
-							(WritableRaster) data, false, null);
+				if (data instanceof WritableRaster) {
+					try {
+						return new BufferedImage(new Palette(),
+								(WritableRaster) data, false, null);
+					} catch (IllegalArgumentException e) {
+						e.printStackTrace();
+					}
+				}
 			}
 			return img;
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			e.printStackTrace();
+			return null;
+			// throw new RuntimeException(e);
 		}
 	}
 
@@ -150,7 +157,7 @@ public class Util {
 			doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
 					.parse(in);
 		} catch (Exception e) {
-			throw new RuntimeException("loadDocument("+url+") "+e);
+			throw new RuntimeException("loadDocument(" + url + ") " + e);
 		}
 		return doc;
 	}
