@@ -81,7 +81,8 @@ public class KMLCanvas extends EM85xx {
 	/** <code>&lt;IMAGE coords='x,y' src='name' /></code> */
 	public void backgroundimage(Image src) {
 		Graphics2D g = getYuvGraphics();
-		g.drawImage(src, 0, 0, this);
+		
+		g.drawImage(src, 0, -48, 720,576 /* 480 */,this);
 		g.dispose();
 	}
 

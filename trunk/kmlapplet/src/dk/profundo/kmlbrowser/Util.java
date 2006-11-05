@@ -1,12 +1,16 @@
 package dk.profundo.kmlbrowser;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
 import java.awt.image.IndexColorModel;
 import java.awt.image.Raster;
+import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -128,9 +132,19 @@ public class Util {
 
 	private static Map loadedImages = new HashMap();
 
+	public static BufferedImage loadBgImage(String url) {
+		if (loadedImages.get(url) != null) {
+			return (BufferedImage) loadedImages.get(url);
+		} else {
+			BufferedImage img = loadImage2(url);
+			loadedImages.put(url, img);
+			return img;
+		}
+	}
+
 	public static BufferedImage loadImage(String url) {
 		if (loadedImages.get(url) != null) {
-			return (BufferedImage)loadedImages.get(url);
+			return (BufferedImage) loadedImages.get(url);
 		} else {
 			BufferedImage img = loadImage2(url);
 			loadedImages.put(url, img);
@@ -142,23 +156,45 @@ public class Util {
 		try {
 			BufferedImage img = ImageIO.read(new URL(url));
 			ColorModel colorModel = img.getColorModel();
+			ColorModel palette = new Palette();
+			/*System.out.println(colorModel);
+			System.out.flush();
+			System.err.println(palette);
+			System.err.flush();*/
 			if (colorModel instanceof IndexColorModel) {
 				Raster data = img.getData();
 				if (data instanceof WritableRaster) {
-					try {
-						return new BufferedImage(new Palette(),
+					if (false && palette.isCompatibleRaster(data))
+						return new BufferedImage(palette,
 								(WritableRaster) data, false, null);
-					} catch (IllegalArgumentException e) {
-						e.printStackTrace();
-					}
+					else
+						return convertToPalette(palette, img);
 				}
 			}
 			return img;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
-			// throw new RuntimeException(e);
 		}
+	}
+
+	static BufferedImage convertToPalette(ColorModel palette,
+			BufferedImage original) {
+		int w = original.getWidth();
+		int h = original.getHeight();
+
+		Raster src = original.getData();
+		WritableRaster dest = palette.createCompatibleWritableRaster(w, h);
+		
+		int[] px = new int[1];
+		for (int i = 0; i < h; i++) {
+			for (int j = 0; j < w; j++) {
+				src.getPixel(j, i, px);
+				dest.setPixel(j, i, px);
+			}
+		}
+
+		return new BufferedImage(palette, (WritableRaster) dest, false, null);
 	}
 
 	public static Document loadDocument(String url) {

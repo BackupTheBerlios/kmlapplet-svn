@@ -10,10 +10,14 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Logger;
@@ -109,7 +113,10 @@ public class KMLInterpreter extends KMLCanvas implements KeyListener,
 		case KMLCommand.BACKGROUND: {
 			String t;
 			if ((t = el.getAttribute("href")) != null && t.length() > 0) {
-				backgroundimage(Util.loadImage(t));
+				BufferedImage loadImage = Util.loadImage(t);
+				System.err.println(loadImage.getWidth() + ","
+						+ loadImage.getHeight());
+				backgroundimage(loadImage);
 
 			} else if ((t = el.getAttribute("vgradient")) != null
 					&& t.length() > 0) {
@@ -134,12 +141,12 @@ public class KMLInterpreter extends KMLCanvas implements KeyListener,
 					.parseInt(el.getAttribute("pen"))), text);
 			break;
 		}
-		/*
-		 * case LINE: { box.setColor(GetColor(el.getAttribute("pen"))); Point
-		 * start = GetPoint(el.getAttribute("coords")); Point end =
-		 * GetEndPoint(el.getAttribute("coords")); this.line()
-		 * box.drawLine(start.x, start.y, end.x, end.y); break; }
-		 */
+			/*
+			 * case LINE: { box.setColor(GetColor(el.getAttribute("pen")));
+			 * Point start = GetPoint(el.getAttribute("coords")); Point end =
+			 * GetEndPoint(el.getAttribute("coords")); this.line()
+			 * box.drawLine(start.x, start.y, end.x, end.y); break; }
+			 */
 		case KMLCommand.RECT: {
 			Color pen = Palette.getColor(Integer.parseInt(el
 					.getAttribute("pen")));
@@ -212,6 +219,9 @@ public class KMLInterpreter extends KMLCanvas implements KeyListener,
 		case KMLCommand.MENUSELECT:
 			selectMenu(el.getAttribute("item"));
 			break;
+		case KMLCommand.PLAYMEDIA:
+			playMedia(el.getAttribute("href"));
+			break;
 		default:
 			message("unhandled" + elementName);
 		}
@@ -266,6 +276,29 @@ public class KMLInterpreter extends KMLCanvas implements KeyListener,
 
 		KMLActionBlock newMenu = getActiveMenu();
 		changeMenu(old, newMenu);
+	}
+
+	MediaPlayer player = null;
+
+	public void playMedia(String url) {
+
+		if (player != null) {
+			player.stop();
+		}
+		try {
+			Properties p = new Properties();
+			p.load(new URL(url).openStream());
+			// p.save(System.out, "File stream");
+			String mp3url = p.getProperty("File1");
+			if (mp3url != null)
+				player = new MediaPlayer(new URL(mp3url));
+		} catch (MalformedURLException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		player.start();
+		System.out.println("Playmedia: " + url);
 	}
 
 	/**
@@ -398,7 +431,7 @@ public class KMLInterpreter extends KMLCanvas implements KeyListener,
 				onButton(Button.NEXT);
 				break;
 			default:
-			// message(event.toString());
+				// message(event.toString());
 			}
 		} catch (Exception e1) {
 			e1.printStackTrace();

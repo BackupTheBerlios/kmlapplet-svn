@@ -12,6 +12,7 @@ public class LoadWebRadio3 {
 		Browser f = new Browser();
 		f.pack();
 		f.setVisible(true);
-		f.setUrl("http://webradio2.kiss-technology.com/webradio3/kml/index.php");
+		//f.setUrl("http://webradio2.kiss-technology.com/webradio3/kml/index.php");
+		f.setUrl("http://webradio2.kiss-technology.com:80/webradio3/kml/showcat.php?category=1002&redraw=true");
 	}
 }
